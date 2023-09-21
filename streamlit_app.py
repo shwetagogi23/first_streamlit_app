@@ -22,6 +22,11 @@ fruits_selected = streamlit.multiselect("Pick some Fruits:", list(my_fruit_list.
 fruits_to_show = my_fruit_list.loc[fruits_selected]
 streamlit.dataframe(fruits_to_show)
 
+#create a repatable block (called a function)
+def get_fruitvice_data(this_fruit_choice):
+  fruityvice_response = requests.get("https://fruityvice.com/api/fruit/"+ fruit_choice)
+  fruityvice_normalize = pandas.json_normalize(fruityvice_response.json())
+  return fruityvice_normalize
 #Session to display Fruityvice API Response
 streamlit.header("Fruityvice Fruit Advice!")
 try:
@@ -30,10 +35,9 @@ try:
     streamlit.error('Please select a fruit to get information')
 #streamlit.write('The user entered', fruit_choice)
   else:
-    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/"+ fruit_choice)
-    #Normalize the Json version of the response
-    fruityvice_normalize = pandas.json_normalize(fruityvice_response.json())
-    streamlit.dataframe(fruityvice_normalize)
+    back_from_function = get_fruitvice_data(fruit_choice)
+    streamlit.dataframe(back_from_function)
+    
 
 except URLError as e:
   streamlit.error()
